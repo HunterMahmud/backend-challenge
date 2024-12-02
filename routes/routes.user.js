@@ -29,7 +29,7 @@ router.post("/addUser", async (req, res) => {
       });
     }
 
-    // User creation logic...
+    // User creation logic...j
   } catch (err) {
     res.status(500).json({ message: "Error creating user", error: err });
   }
