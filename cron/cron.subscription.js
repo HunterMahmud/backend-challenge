@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const User = require('../models/model.user');
+const { processPayment } = require('../services/service.payment');
 
 const processPayments = async () => {
   const now = new Date();
@@ -11,18 +12,24 @@ const processPayments = async () => {
     });
 
     for (const user of users) {
-      // i have to add Authorize.net API later
-      const paymentSuccess = true; // testing purpose payment status to just for testing
-      console.log(`Processing payment for: ${user?.email}`);
+      console.log(`Processing payment for: ${user.email}`);
+      try {
+        const paymentResult = await processPayment({
+          cardNumber: user.paymentDetails.cardNumber,
+          expiryDate: user.paymentDetails.expiryDate,
+          cvc: user.paymentDetails.cvc,
+          amount: 97, // Charging $97 as per requirements
+        });
 
-      if (paymentSuccess) {
-        user.planEndDate = new Date(now.setMonth(now.getMonth() + 1)); // + 1 month extend
-        await user.save();
-        console.log(`Payment successful for ${user?.email}`);
-      } else {
+        if (paymentResult.success) {
+          user.planEndDate = new Date(now.setMonth(now.getMonth() + 1)); // Extend by 1 month
+          await user.save();
+          console.log(`Payment successful for ${user.email}`);
+        }
+      } catch (err) {
         user.status = 'inactive';
         await user.save();
-        console.log(`Payment failed ${user?.email}`);
+        console.error(`Payment failed for ${user.email}:`, err);
       }
     }
   } catch (error) {
