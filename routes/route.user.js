@@ -29,7 +29,48 @@ router.post("/addUser", async (req, res) => {
       });
     }
 
-    // User creation logic...j
+    // Set default values for plan dates
+    const planStartDate = new Date();
+    let planEndDate = null; // if payment fails then null
+
+    let status = "inactive"; // Default is inactive
+
+    if (paymentResult.success) {
+      // Update dates and status for successful payment
+      planEndDate = new Date();
+      planEndDate.setMonth(planEndDate.getMonth() + 1); // Add 1 month to current date
+      status = "active";
+    }
+
+    // Save user to database
+    const newUser = new User({
+      name,
+      email,
+      status,
+      planStartDate,
+      planEndDate,
+      paymentDetails: {
+        cardNumber,
+        cvc,
+        expiryDate,
+      },
+    });
+
+    await newUser.save();
+
+    res.status(201).json({
+      message: paymentResult.success
+        ? "User created successfully with initial payment processed."
+        : "User created but initial payment failed.",
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        status: newUser.status,
+        planStartDate: newUser.planStartDate,
+        planEndDate: newUser.planEndDate,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: "Error creating user", error: err });
   }
