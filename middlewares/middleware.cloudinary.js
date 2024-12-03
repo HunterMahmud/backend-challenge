@@ -14,7 +14,7 @@ const fileFilter = (req, file, cb) => {
   ];
 
   // Max file size (5MB)
-  const maxSize = 15 * 1024 * 1024; 
+  const maxSize = 5 * 1024 * 1024; 
 
   // Check file type
   if (!allowedTypes.includes(file.mimetype)) {
@@ -23,7 +23,7 @@ const fileFilter = (req, file, cb) => {
 
   // Check file size
   if (file.size > maxSize) {
-    return cb(new Error('File size exceeds 15MB limit.'), false);
+    return cb(new Error('File size exceeds 5MB limit.'), false);
   }
 
   cb(null, true);
@@ -33,7 +33,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: fileFilter,
-  limits: {    fileSize: 15 * 1024 * 1024 } // 15MB
+  limits: {    fileSize: 5 * 1024 * 1024 } // 5MB
 });
 
 module.exports = upload;
