@@ -5,6 +5,7 @@ require('dotenv').config();
 const userRoutes = require('./routes/route.user');
 const processPayments = require('./cron/cron.subscription');
 const fileUpload = require('./routes/route.fileUpload');
+const courseModify = require('./routes/route.course');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -16,6 +17,8 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 // 2. api for file upload
 app.use('/api/file', fileUpload);
+// 3. api for file upload
+app.use('/', courseModify);
 
 // Database connection
 mongoose

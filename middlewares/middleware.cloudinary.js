@@ -13,8 +13,8 @@ const fileFilter = (req, file, cb) => {
     'audio/mpeg'
   ];
 
-  // Max file size (25MB)
-  const maxSize = 25 * 1024 * 1024; 
+  // Max file size (5MB)
+  const maxSize = 15 * 1024 * 1024; 
 
   // Check file type
   if (!allowedTypes.includes(file.mimetype)) {
@@ -23,7 +23,7 @@ const fileFilter = (req, file, cb) => {
 
   // Check file size
   if (file.size > maxSize) {
-    return cb(new Error('File size exceeds 25MB limit.'), false);
+    return cb(new Error('File size exceeds 15MB limit.'), false);
   }
 
   cb(null, true);
@@ -33,7 +33,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: fileFilter,
-  limits: {    fileSize: 25 * 1024 * 1024 } // 25MB
+  limits: {    fileSize: 15 * 1024 * 1024 } // 15MB
 });
 
 module.exports = upload;
